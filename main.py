@@ -1,4 +1,5 @@
 import turtle   #used to create turtle objects
+import random   #used to create random x,y co-ordinates for objects
 import time     #used to delay execution of code
 
 
@@ -13,8 +14,12 @@ default_object_size = 20
 
 
 ## Intial Values For Variables
-
+remaining_lives = 0
 object_speed = 0    # this is the animation speed of the objects
+impact_zone = 20     # In Python Turtle Graphics, Objects are 20px in Size...
+                        # Therefore the distance between the centre of an object from the outer is 10px..
+                        # Therefore if the distance between the centres of two objects is 20 (or smaller)
+                        # That means the object are overlapping and have impacted
 
 
 ### Screen Setup
@@ -43,14 +48,15 @@ regular_block = turtle.Turtle() # Creates a new turtle object for the regular bl
 # Below defines the characteristics of the regular block
 regular_block.shape("circle")
 regular_block.speed(object_speed)
+regular_block_x = random.randint(-(game_screen_size/2), (game_screen_size/2)) #division by two as it calculates position..
+regular_block_y = random.randint(-(game_screen_size/2), (game_screen_size/2))#.. from the center of the screen
 regular_block.penup()   # This prevents the regular block from drawing anything as it moves, ie. leaving no trace
+regular_block.goto(regular_block_x,regular_block_y)
 regular_block.color("red")
-
 
 ## Keyboard Functions (to Move mamba)
 #### the != statments are used to provide self impact due to the mabma head reversing into extentions
 ### to be created later.
-
 def turn_left():
     if mamba_head.direction != "right":
         mamba_head.direction = "left"
@@ -96,8 +102,21 @@ while gameplay == True:
     game_screen.listen()    # Listens for key changes
     game_screen.update()    # Updates Screen With Changes
 
+
+    ### Regular Block Impact Check
+    if impact_zone > mamba_head.distance(regular_block):
+        # Move Regular Block to Random Position After Impact
+        # Division by two as it calculates position from the center of the screen
+        random_regular_block_x = random.randint(-(game_screen_size / 2), (game_screen_size / 2))
+        random_regular_block_y = random.randint(-(game_screen_size / 2), (game_screen_size / 2))
+        regular_block.goto(random_regular_block_x, random_regular_block_y)
+        # Updating lives
+        remaining_lives = remaining_lives + 1
+
+
+
     maneuver()   #calls function to ensure the mamba moves
 
 
-
-    time.sleep(wait_before_reloop)  #make the loop wait before re-looping to prevent the mamba object from moving too fast
+    print(remaining_lives)
+    time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
