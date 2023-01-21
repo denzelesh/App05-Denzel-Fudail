@@ -3,6 +3,7 @@ import turtle   #used to create turtle objects
 
 ### Initialising Constants
 gameplay = True
+wait_before_reloop = 0.15
 
 ### Screen Setup
 game_screen = turtle.Screen()   # Creates a new turtle object for the game screen
