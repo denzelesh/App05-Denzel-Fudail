@@ -142,5 +142,10 @@ while gameplay == True:
 
 
 
+    time.sleep(wait_before_reloop)  #make the loop wait before re-looping to prevent the mamba object from moving too fast
+
+
+
+
 
 
