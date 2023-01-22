@@ -1,7 +1,7 @@
 import turtle   #used to create turtle objects
 import random   #used to create random x,y co-ordinates for objects
 import time     #used to delay execution of code
-
+import os       #used to enable sound effects
 
 
 ### Initialising Constants
@@ -10,7 +10,9 @@ wait_before_reloop = 0.15
 pause_until_input = "stop"  #prevents object from initially moving without user input
 default_object_size = 20
 to_display_message = 1  #length of time in seconds to delay execution of code
-
+winning_music_path = "../UniPythonSnakeGame/luckyblocksucess.mp3"
+lose_music_path = "../UniPythonSnakeGame/noluckyblocksucess.mp3"
+player_life_lost_path = "../UniPythonSnakeGame/collsioncauselifelost.mp3"
 
 
 
@@ -190,6 +192,7 @@ while gameplay == True:
 
     if lucky_blocks_collected == 5:
 
+        os.system("afplay " + winning_music_path)   #plays a sound effect & pauses the game
         time.sleep(to_display_message)      #allows player to read on screen message
         break # Ends the game_play loop and in turn ends the game
 
@@ -225,6 +228,7 @@ while gameplay == True:
         if remaining_lives == start_lives:
             game_lost = 5  # this will iniate another loop to show a 'game lost' message
 
+        os.system("afplay " + player_life_lost_path)    #plays sound effect to indicate a loss of life
         mamba_head.goto(mamba_start_postiion) #re-centers the mamba head to start position
         mamba_head.direction = pause_until_input
 
@@ -242,6 +246,7 @@ while gameplay == True:
             remaining_lives = remaining_lives -1
 
 
+
         else:
             # Reset the players score
             players_score = start_score
@@ -255,9 +260,9 @@ while gameplay == True:
             #break   # bresks the loop and in turn end the game
 
     if game_lost == 5: #could have used boolean, but prior test show error causing incrorrect running of loop
+        os.system("afplay " + lose_music_path) #plays lost game sound effect
         time.sleep(to_display_message)
         break  # breaks the loop and in turn end the game
-
     print(remaining_lives)
     print(players_score)
     time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
