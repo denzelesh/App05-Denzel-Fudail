@@ -14,6 +14,7 @@ default_object_size = 20
 
 
 ## Intial Values For Variables
+
 remaining_lives = 0
 object_speed = 0    # this is the animation speed of the objects
 impact_zone = 20     # In Python Turtle Graphics, Objects are 20px in Size...
@@ -54,9 +55,10 @@ regular_block.penup()   # This prevents the regular block from drawing anything 
 regular_block.goto(regular_block_x,regular_block_y)
 regular_block.color("red")
 
+
+
 ## Keyboard Functions (to Move mamba)
-#### the != statments are used to provide self impact due to the mabma head reversing into extentions
-### to be created later.
+#### the != statments are used to provide self impact due to the mabma head reversing
 def turn_left():
     if mamba_head.direction != "right":
         mamba_head.direction = "left"
@@ -74,8 +76,10 @@ def move_downwards():
         mamba_head.direction = "down"
 
 
-def maneuver():
-    ## this function cause the mamba head to manoeuvre
+def go_and_avoid_mamba_head_impact():
+    ## this function cause the mamba head to manoeuvre and prevent impact..
+    ## with itself by ensuring the mamba head moves before an extension is
+    ## put in its position
     if mamba_head.direction == "up":
         mamba_head.sety(mamba_head.ycor() + default_object_size)
 
@@ -96,6 +100,10 @@ game_screen.onkeyrelease(turn_right, "Right")
 game_screen.onkeyrelease(move_upwards, "Up")
 game_screen.onkeyrelease(move_downwards, "Down")
 
+
+mamba_extenstions = []    #Empty list which will store the mamba extensions & grow in size upon impact
+                        #Outside Function as putting inside cause 'undefined' error
+
 # Main Game Loop
 
 while gameplay == True:
@@ -114,8 +122,30 @@ while gameplay == True:
         remaining_lives = remaining_lives + 1
 
 
+        ### Setting Up New Mamba Extension
+        new_mamba_extenstion = turtle.Turtle()    # Creates a new Turtle object for mamba extensions
+        new_mamba_extenstion.penup()              #Prevents the mamba extensions from leaving lines/trails in the screen
+        new_mamba_extenstion.shape("square")
+        new_mamba_extenstion.speed(object_speed)
+        mamba_extenstions.append(new_mamba_extenstion)      #Adds new mamba extension to list
 
-    maneuver()   #calls function to ensure the mamba moves
+
+        # Adding extensions to mamba by...
+        # Going through each mamba extension in list and..
+        # making the new mamba extension  assume the last position of the mamba ..
+        # starting from the last mamba extension (As starting with first causes 'out of range error')
+    for each_mamba_extenstion in range(len(mamba_extenstions) - 1, 0, -1):
+        mamba_extenstion_x = mamba_extenstions[each_mamba_extenstion - 1].xcor()
+        mamba_extenstion_y = mamba_extenstions[each_mamba_extenstion - 1].ycor()
+        mamba_extenstions[each_mamba_extenstion].goto(mamba_extenstion_x, mamba_extenstion_y)
+
+    ### Starts the process once a new mamba extension has been created
+    if len(mamba_extenstions) > 0: #detetmines whether a mamba extension has been created
+        initial_mamba_extenstion_x = mamba_head.xcor()
+        initial_gorwth_amount_y = mamba_head.ycor()
+        mamba_extenstions[0].goto(initial_mamba_extenstion_x, initial_gorwth_amount_y)
+
+    go_and_avoid_mamba_head_impact()   #calls function to ensure the mamba moves & does not collide with new extensions
 
 
     print(remaining_lives)
