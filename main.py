@@ -17,6 +17,7 @@ to_display_message = 1  #length of time in seconds to delay execution of code
 ## Intial Values For Variables
 players_score = 0
 remaining_lives = 0
+game_lost = 0
 object_speed = 0    # this is the animation speed of the objects
 impact_zone = 20     # In Python Turtle Graphics, Objects are 20px in Size...
                         # Therefore the distance between the centre of an object from the outer is 10px..
@@ -29,6 +30,7 @@ game_screen = turtle.Screen()   # Creates a new turtle object for the game scree
 # Below defines the characteristics of the game screen
 game_screen_size = 626
 game_screen.setup(width=game_screen_size, height=game_screen_size)  # Creates a perfectly square game screen
+outside_game_screen = game_screen_size*2    # Creates values needed to remove mamba extensions from screen
 game_screen.bgcolor("purple")
 game_screen.tracer(0) #Ignores built in turtle animations by ignoring screen updates
 
@@ -72,6 +74,12 @@ timer = []  #Creates an empty list that will will grow in size recursively...
             # and be used to mimic functionality of a timer
 hide_lucky_block_at  = [40] #x3
 show_lucky_block_at = [80] #1.5
+
+
+
+game_lost_message = "Game Over, You Lost"
+start_lives = 0
+start_score = 0
 
 
 
@@ -209,5 +217,47 @@ while gameplay == True:
                         # having to define new values for 'hide_lucky_block_at' and 'show_lucky_block_at'
 
 
+    ### Border Impact Check
+    ## this if statment outlines the borders of the game screen & determines if mamba head is outside screen...
+    # ...Division by two as it calculates position from the center of the screen
+    if mamba_head.xcor() > (game_screen_size/2) or mamba_head.xcor() < -(game_screen_size/2) or mamba_head.ycor() > (game_screen_size/2) or mamba_head.ycor() < -(game_screen_size/2):
+
+        if remaining_lives == start_lives:
+            game_lost = 5  # this will iniate another loop to show a 'game lost' message
+
+        mamba_head.goto(mamba_start_postiion) #re-centers the mamba head to start position
+        mamba_head.direction = pause_until_input
+
+
+        # Hide mamba Extenstions
+        for mamba_extenstion in mamba_extenstions:  #this is going through each mamba extension in mamba extensions list
+            # this will move the old mamba extentions to outside the screen & python turtle
+            # has no inbuilt way of clearing these mamba extensions from memory
+            mamba_extenstion.goto(outside_game_screen, outside_game_screen)
+
+        mamba_extenstions.clear() #this empties the growth amounts list
+
+        # Removes Lives If Present
+        if remaining_lives > start_lives:
+            remaining_lives = remaining_lives -1
+
+
+        else:
+            # Reset the players score
+            players_score = start_score
+            remaining_lives = start_lives
+            #mamba_extenstions.clear()
+
+    ## Checks for Body Impact
+    for mamba_extenstion in mamba_extenstions:
+        if mamba_extenstion.distance(mamba_head) < impact_zone:
+            game_lost = 5 #this will iniate another loop to show a 'game lost' message
+            #break   # bresks the loop and in turn end the game
+
+    if game_lost == 5: #could have used boolean, but prior test show error causing incrorrect running of loop
+        time.sleep(to_display_message)
+        break  # breaks the loop and in turn end the game
+
     print(remaining_lives)
+    print(players_score)
     time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
