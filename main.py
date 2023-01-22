@@ -172,6 +172,10 @@ while gameplay == True:
         lucky_block.hideturtle()
         players_score = players_score + 25
         # Division by two as it calculates position from the center of the screen
+        hidden_randomx = random.randint(-(game_screen_size / 2), (game_screen_size / 2))
+        hideen_randomy = random.randint(-(game_screen_size / 2), (game_screen_size / 2))
+        lucky_block.goto(hidden_randomx, hideen_randomy)    #Prevents Double Scores caused by the mamba collecting
+                                                            # lucky block more than once
         lucky_blocks_collected = lucky_blocks_collected + 1
         print(players_score)
 
@@ -205,5 +209,5 @@ while gameplay == True:
                         # having to define new values for 'hide_lucky_block_at' and 'show_lucky_block_at'
 
 
-
+    print(remaining_lives)
     time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
