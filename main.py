@@ -9,12 +9,13 @@ gameplay = True
 wait_before_reloop = 0.15
 pause_until_input = "stop"  #prevents object from initially moving without user input
 default_object_size = 20
+to_display_message = 1  #length of time in seconds to delay execution of code
 
 
 
 
 ## Intial Values For Variables
-
+players_score = 0
 remaining_lives = 0
 object_speed = 0    # this is the animation speed of the objects
 impact_zone = 20     # In Python Turtle Graphics, Objects are 20px in Size...
@@ -54,6 +55,24 @@ regular_block_y = random.randint(-(game_screen_size/2), (game_screen_size/2))#..
 regular_block.penup()   # This prevents the regular block from drawing anything as it moves, ie. leaving no trace
 regular_block.goto(regular_block_x,regular_block_y)
 regular_block.color("red")
+
+
+### Lucky Block Setup
+lucky_block = turtle.Turtle()   # Creates a new turtle object for the turtle object
+# Below defines the characteristics of the lucky block
+lucky_block.shape("circle")
+lucky_block.color("yellow")
+lucky_block.speed(object_speed)
+lucky_block_x = random.randint(-(game_screen_size/2), (game_screen_size/2))#division by two as it calculates position..
+lucky_block_y = random.randint(-(game_screen_size/2), (game_screen_size/2))#.. from the center of the screen
+lucky_block.penup()     # This prevents the lucky block from drawing anything as it moves, ie. leaving no trace
+lucky_block.goto(lucky_block_x, lucky_block_y)
+lucky_blocks_collected = 0
+timer = []  #Creates an empty list that will will grow in size recursively...
+            # and be used to mimic functionality of a timer
+hide_lucky_block_at  = [40] #x3
+show_lucky_block_at = [80] #1.5
+
 
 
 
@@ -148,5 +167,43 @@ while gameplay == True:
     go_and_avoid_mamba_head_impact()   #calls function to ensure the mamba moves & does not collide with new extensions
 
 
-    print(remaining_lives)
+    ## Lucky Block Impact Check
+    if impact_zone > mamba_head.distance(lucky_block):
+        lucky_block.hideturtle()
+        players_score = players_score + 25
+        # Division by two as it calculates position from the center of the screen
+        lucky_blocks_collected = lucky_blocks_collected + 1
+        print(players_score)
+
+
+    if lucky_blocks_collected == 5:
+
+        time.sleep(to_display_message)      #allows player to read on screen message
+        break # Ends the game_play loop and in turn ends the game
+
+
+    ### Lucky Block 'Makeshift' Timer
+    timer.append(1) #Increases List By 1 Entry Each Loop
+    tally = 0   #Creates A Taly
+    for timepassing in timer:
+        tally = tally + 1   #tally increments based on many entires
+    time_elapsed = (int(tally)) #this convers tally into an int
+
+    # This will hide the turtle after 40 entries have been appended (approx takes 5 secs)
+    if time_elapsed in hide_lucky_block_at: #We don't use direct as the list contains the amount
+        lucky_block.hideturtle()
+
+
+    ## This will show the turtle after 80 entries have been appended (approx takes 5 secs)
+    if time_elapsed in show_lucky_block_at:
+        # Division by two as it calculates position from the center of the screen
+        newx = random.randint(-(game_screen_size/2), (game_screen_size/2))
+        newy = random.randint(-(game_screen_size/2), (game_screen_size/2))
+        lucky_block.goto(newx, newy)    #places lucky block in new random position before being shown again
+        lucky_block.showturtle()
+        timer.clear() #this clears the list, so that the loop can work indefinitely without..
+                        # having to define new values for 'hide_lucky_block_at' and 'show_lucky_block_at'
+
+
+
     time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
