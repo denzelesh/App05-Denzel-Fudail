@@ -302,3 +302,6 @@ while gameplay == True:
         break  # breaks the loop and in turn end the game
 
     time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
+    
+    ### @Denzel Eshun
+    ### @Fudailahad Khan
