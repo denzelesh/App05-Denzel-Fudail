@@ -10,9 +10,9 @@ wait_before_reloop = 0.15
 pause_until_input = "stop"  #prevents object from initially moving without user input
 default_object_size = 20
 to_display_message = 1  #length of time in seconds to delay execution of code
-winning_music_path = "../UniPythonSnakeGame/luckyblocksucess.mp3"
-lose_music_path = "../UniPythonSnakeGame/noluckyblocksucess.mp3"
-player_life_lost_path = "../UniPythonSnakeGame/collsioncauselifelost.mp3"
+winning_music_path = "../PR1GameDenzelandFudail/luckyblocksucess.mp3"
+lose_music_path = "../PR1GameDenzelandFudail/noluckyblocksucess.mp3"
+player_life_lost_path = "../PR1GameDenzelandFudail/collsioncauselifelost.mp3"
 
 
 
@@ -78,8 +78,25 @@ hide_lucky_block_at  = [40] #x3
 show_lucky_block_at = [80] #1.5
 
 
-
+## Game Metrics Setup
+game_metrics = turtle.Turtle()  # Creates a new turtle object to display the game metrics
+# Below defines the characteristics of the game metrics
+game_metrics.hideturtle()       # Hides Turtle as the turtle itself is not required, simply its 'results'
+game_metrics.speed(object_speed)
+game_metrics_location = (150, 260)
+#game_metrics.shape("square")
+game_metrics.color("white")
+game_metrics.penup()    # This prevents the game metrics from drawing anything as it moves, ie. leaving no trace
+game_metrics.goto(game_metrics_location)
 game_lost_message = "Game Over, You Lost"
+game_won_message = "Congrats! You Won!"
+starting_game_metric = "⭐ Score : 0   ❤️ Lives : 0"
+variable_game_metric = "⭐ Score : {}   ❤️ Lives : {}"
+game_metric_fontname = "Arial"
+game_metric_fonttype= "bold"
+game_metric_fontalignment = "center"
+game_metric_fontsize = "22"
+game_metrics.write(starting_game_metric, align=game_metric_fontalignment, font=(game_metric_fontname,game_metric_fontsize, game_metric_fonttype))  # The format of game metrics
 start_lives = 0
 start_score = 0
 
@@ -147,9 +164,11 @@ while gameplay == True:
         random_regular_block_x = random.randint(-(game_screen_size / 2), (game_screen_size / 2))
         random_regular_block_y = random.randint(-(game_screen_size / 2), (game_screen_size / 2))
         regular_block.goto(random_regular_block_x, random_regular_block_y)
-        # Updating lives
+        # Updating Game Metrics
         remaining_lives = remaining_lives + 1
-
+        game_metrics.clear()    #removes the previous metrics on screen
+        game_metrics.write(variable_game_metric.format(players_score, remaining_lives), align=game_metric_fontalignment,
+                           font=(game_metric_fontname, game_metric_fontsize, game_metric_fonttype)) #updates with new game metrics
 
         ### Setting Up New Mamba Extension
         new_mamba_extenstion = turtle.Turtle()    # Creates a new Turtle object for mamba extensions
@@ -187,11 +206,14 @@ while gameplay == True:
         lucky_block.goto(hidden_randomx, hideen_randomy)    #Prevents Double Scores caused by the mamba collecting
                                                             # lucky block more than once
         lucky_blocks_collected = lucky_blocks_collected + 1
-        print(players_score)
-
+        game_metrics.clear()    #removes the previous metrics on screen
+        game_metrics.write(variable_game_metric.format(players_score, remaining_lives), align=game_metric_fontalignment,
+                           font=(game_metric_fontname, game_metric_fontsize, game_metric_fonttype)) #Updates with new game metrics
 
     if lucky_blocks_collected == 5:
-
+        game_metrics.clear()    #removes the previous metrics on screen
+        game_metrics.write(game_won_message, align=game_metric_fontalignment, font=(game_metric_fontname,game_metric_fontsize, game_metric_fonttype)) #Updates with
+                                                                                                    # new game metrics
         os.system("afplay " + winning_music_path)   #plays a sound effect & pauses the game
         time.sleep(to_display_message)      #allows player to read on screen message
         break # Ends the game_play loop and in turn ends the game
@@ -253,16 +275,30 @@ while gameplay == True:
             remaining_lives = start_lives
             #mamba_extenstions.clear()
 
+
+        game_metrics.clear()
+        game_metrics.write(variable_game_metric.format(players_score, remaining_lives), align=game_metric_fontalignment,
+                           font=(game_metric_fontname, game_metric_fontsize, game_metric_fonttype))     #updates with new game metric information
+
+
     ## Checks for Body Impact
     for mamba_extenstion in mamba_extenstions:
         if mamba_extenstion.distance(mamba_head) < impact_zone:
             game_lost = 5 #this will iniate another loop to show a 'game lost' message
             #break   # bresks the loop and in turn end the game
 
+
+        game_metrics.clear()
+        ## Updates game with more recent metrics
+        game_metrics.write(variable_game_metric.format(players_score, remaining_lives), align=game_metric_fontalignment, font=(game_metric_fontname,game_metric_fontsize, game_metric_fonttype))
+
+
+
     if game_lost == 5: #could have used boolean, but prior test show error causing incrorrect running of loop
+        game_metrics.clear()
+        game_metrics.write(game_lost_message, align=game_metric_fontalignment, font=(game_metric_fontname,game_metric_fontsize, game_metric_fonttype))
         os.system("afplay " + lose_music_path) #plays lost game sound effect
         time.sleep(to_display_message)
         break  # breaks the loop and in turn end the game
-    print(remaining_lives)
-    print(players_score)
+
     time.sleep(wait_before_reloop)  #make the loop wait before re-looping so that all prior loops can be completed.
