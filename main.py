@@ -58,7 +58,8 @@ game_screen = turtle.Screen()  # Creates a new turtle object for the game screen
 game_screen_size = 626
 game_screen.setup(width=game_screen_size, height=game_screen_size)  # Creates a perfectly square game screen
 outside_game_screen = game_screen_size * 2  # Creates values needed to remove mamba extensions from screen
-game_screen.bgcolor("purple")
+#game_screen.bgcolor("purple")
+game_screen.bgpic("graphicalbackground.png")
 game_screen.tracer(0)  # Ignores built in turtle animations by ignoring screen updates
 
 ### Mamba Setup
